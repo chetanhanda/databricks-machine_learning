@@ -57,6 +57,13 @@ display(renamed_raw_df)
 renamed_raw_df = addIdColumn(renamed_raw_df, "wine_id")
 display(renamed_raw_df)
 
+
+
+# COMMAND ----------
+
+renamed_raw_df.createOrReplaceGlobalTempView("df_temp")
+display(spark.sql("select * from global_temp.df_temp"))
+
 # COMMAND ----------
 
 trimmed_df = renamed_raw_df.drop("quality")
