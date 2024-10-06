@@ -64,4 +64,43 @@ display(trimmed_df)
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC create database if not exists ml.wine_db
+# MAGIC
+# MAGIC
+
+# COMMAND ----------
+
+table_name = f"ml.wine_db.wine_" +str(uuid.uuid4())[:6]
+print(table_name)
+
+# COMMAND ----------
+
+#spark.sql(f"drop  database wine_db")
+
+# COMMAND ----------
+
+fs = feature_store.FeatureStoreClient()
+
+# COMMAND ----------
+
+fs.create_table(
+    name=table_name,
+    primary_keys=["wine_id"],
+    df= trimmed_df,
+    schema=trimmed_df.schema,
+    description="Wine features"
+)
+
+# COMMAND ----------
+
+# fs.drop_table(table_name)
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from ml.wine_db.wine_0b4044
+
+# COMMAND ----------
+
 
