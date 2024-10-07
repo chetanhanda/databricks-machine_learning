@@ -22,6 +22,7 @@ display(df)
 # wine_id will be the primary key based on which this raw dataset will be joined to the dataframe
 raw_new_df = df.select("wine_id", "quality", (10 * rand()).alias("real_time_measurement")).orderBy("real_time_measurement")
 display(raw_new_df)
+raw_new_df.createOrReplaceGlobalTempView("df_temp")
 
 # COMMAND ----------
 
@@ -50,7 +51,7 @@ def load_data(table_name, lookup_key):
 
 # COMMAND ----------
 
-X_train,X_test,y_train,y_test,training_set = load_data("ml.wine_db.wine_0b4044","wine_id")
+X_train,X_test,y_train,y_test,training_set = load_data("ml.wine_db.wine_features_v1","wine_id")
 
 # COMMAND ----------
 
@@ -97,8 +98,4 @@ def train_model(X_train,y_train, X_test,y_test,training_set,fs):
 
 
 train_model(X_train,y_train,X_test,y_test,training_set,fs)                          
-
-
-# COMMAND ----------
-
 

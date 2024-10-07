@@ -71,14 +71,23 @@ display(trimmed_df)
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC create database if not exists ml.wine_db
-# MAGIC
-# MAGIC
+# MAGIC %md
+# MAGIC Specify catalog and database
 
 # COMMAND ----------
 
-table_name = f"ml.wine_db.wine_" +str(uuid.uuid4())[:6]
+# MAGIC %sql
+# MAGIC use catalog "ml"
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC use database `wine_db`
+
+# COMMAND ----------
+
+# table_name = f"ml.wine_db.wine_" +str(uuid.uuid4())[:6]
+table_name = "ml.wine_db.wine_features_v1"
 print(table_name)
 
 # COMMAND ----------
@@ -87,26 +96,40 @@ print(table_name)
 
 # COMMAND ----------
 
-fs = feature_store.FeatureStoreClient()
+from databricks.feature_engineering import FeatureEngineeringClient
+
+fs = FeatureEngineeringClient()
 
 # COMMAND ----------
+
+# fs.drop_table(name="wine_features_v1")
+
+dbTable = f"ml.wine_db.{table_name}"
+
+if spark.catalog.tableExists("wine_features_v1"):
+    print(f"Table {dbTable} deleted")
+    fs.drop_table(name="wine_features_v1")
+    print(f"Table {dbTable} Creating fresh table")
+else:
+    print(f"Table {dbTable} does not exist. Creating table for 1st time")
+
 
 fs.create_table(
     name=table_name,
     primary_keys=["wine_id"],
-    df= trimmed_df,
+    df=trimmed_df,
     schema=trimmed_df.schema,
     description="Wine features"
-)
+    )
 
-# COMMAND ----------
-
-# fs.drop_table(table_name)
+print(f"Table {dbTable} created")
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC select * from ml.wine_db.wine_0b4044
+# MAGIC
+# MAGIC select * from ml.wine_db.wine_features_v1
+# MAGIC
 
 # COMMAND ----------
 
