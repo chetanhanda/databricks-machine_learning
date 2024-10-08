@@ -77,7 +77,7 @@ with mlflow.start_run() as run:
 
     #use the model to try and make predictions
     y_pred = rf.predict(X_test)
-    
+
     #log the model's params
     mlflow.log_param("n_estimators_log", n_estimators)
     mlflow.log_param("max_depth_log", max_depth)
