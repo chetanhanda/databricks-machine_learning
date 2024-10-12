@@ -113,6 +113,11 @@ spark.sql(sql)
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ### create features in the silver layer 
+
+# COMMAND ----------
+
 bank_feature_table = fclient.create_table(
   name=f"bank_customer_features", # the name of the feature table
   primary_keys=["CustomerId"], # primary key that will be used to perform joins
