@@ -34,23 +34,23 @@ EXPERIMENT_NAME = f"Bank_Customer_Churn_Analysis"
 
 # COMMAND ----------
 
-class Feature_Lookup_Input_Tuple(typing.NamedTuple):
-  fature_table_name: str
-  feature_list: typing.Union[typing.List[str], None] 
-  lookup_key: typing.List[str]
+# class Feature_Lookup_Input_Tuple(typing.NamedTuple):
+#   fature_table_name: str
+#   feature_list: typing.Union[typing.List[str], None] 
+#   lookup_key: typing.List[str]
 
 
-def generate_feature_lookup(feature_mapping: typing.List[Feature_Lookup_Input_Tuple]) -> typing.List[FeatureLookup]:  
-  lookups = []
-  for fature_table_name, feature_list, lookup_key in feature_mapping:
-    lookups.append(
-          FeatureLookup(
-          table_name = fature_table_name,
-          feature_names = feature_list,
-          lookup_key = lookup_key 
-      )
-    )
-  return lookups
+# def generate_feature_lookup(feature_mapping: typing.List[Feature_Lookup_Input_Tuple]) -> typing.List[FeatureLookup]:  
+#   lookups = []
+#   for fature_table_name, feature_list, lookup_key in feature_mapping:
+#     lookups.append(
+#           FeatureLookup(
+#           table_name = fature_table_name,
+#           feature_names = feature_list,
+#           lookup_key = lookup_key 
+#       )
+#     )
+#   return lookups
 
 # COMMAND ----------
 
