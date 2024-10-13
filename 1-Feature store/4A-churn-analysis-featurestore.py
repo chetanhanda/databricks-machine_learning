@@ -7,15 +7,14 @@
 files = dbutils.fs.ls("/mnt/expt2")
 display(files)
 
-
 # COMMAND ----------
 
-bank_df = spark.read\
+bank_sdf = spark.read\
   .option("header",True)\
-  .option("inferceSchema",True)\
+  .option("inferenceSchema",True)\
   .csv("dbfs:/mnt/expt2/churn.csv") 
 
-display(bank_df)
+display(bank_sdf)
 
 # COMMAND ----------
 
@@ -38,22 +37,20 @@ spark.sql(sql)
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### write the data frame into a delta table
+# MAGIC ### Write the data frame into a delta table in the BRONZE layer
 
 # COMMAND ----------
 
-bank_df.write.format('delta').mode('overwrite').saveAsTable(f"{databasename}.bank_churn")
+bank_sdf.write\
+    .format('delta')\
+    .mode('overwrite')\
+    .saveAsTable(f"{databasename}.bank_churn")
 
 # COMMAND ----------
 
 import pyspark.pandas as pd
 import numpy as np
 
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC -- drop database bank_churn cascade
 
 # COMMAND ----------
 
@@ -77,17 +74,18 @@ def compute_features(spark_data_frame):
     ps_df_ohe.columns = ps_df_ohe.columns.str.replace(r'(','-', regex=True)
     ps_df_ohe.columns = ps_df_ohe.columns.str.replace(r')','', regex=True)
 
+    return ps_df_ohe
+
 # COMMAND ----------
 
-bank_churn_final = compute_features(bank_df)
-display(bank_churn_final) 
+bank_churn_final_pysdf = compute_features(bank_sdf)
+
+display(bank_churn_final_pysdf)
 
 # COMMAND ----------
 
 from databricks.feature_engineering import FeatureEngineeringClient
 fclient = FeatureEngineeringClient()
-
-
 
 # COMMAND ----------
 
@@ -109,10 +107,6 @@ spark.sql(sql)
 
 # COMMAND ----------
 
-
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC ### create features in the silver layer 
 
@@ -121,9 +115,26 @@ spark.sql(sql)
 bank_feature_table = fclient.create_table(
   name=f"bank_customer_features", # the name of the feature table
   primary_keys=["CustomerId"], # primary key that will be used to perform joins
-  schema=bank_df.schema, # the schema of the Feature table
+  schema=bank_churn_final_pysdf.to_spark().schema,
   description="This customer level table contains one-hot encoded categorical and scaled numeric features to predict bank customer churn."
 )
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from bank_customer_features
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC Go back to spark dataframe , makes it easier to work with the features and delta tables
+
+# COMMAND ----------
+
+bank_churn_final_pysdf\
+    .to_spark()\
+    .write.mode("overwrite")\
+    .saveAsTable("bank_customer_features")
 
 # COMMAND ----------
 
