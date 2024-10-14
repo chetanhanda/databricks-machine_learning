@@ -60,16 +60,10 @@ print(mlflow.version.VERSION)
 
 # COMMAND ----------
 
-# # Corrected code with an absolute path
-# fs = dbutils.fs.ls('/dbfs/databricks/mlflow/experiments/')
-# display(fs)
-
-# COMMAND ----------
-
 # Projects/databricks-machine_learning/2-ML Flow/wine-analysis/2-with-MLFlow
 
 experiment_name = '/Users/databricksadmin@eruzasubscriptionhotmail.onmicrosoft.com/wine-analysis-experiments-batch1'
-mlflow.set_experiment(experiment_name)
+mlflow.set_experiment(experiment_name=experiment_name)
 
 # COMMAND ----------
 
@@ -78,7 +72,7 @@ mlflow.set_experiment(experiment_name)
 mlflow.sklearn.autolog()
 
 # since autolog is enabled , all maodel parameters, model score, fitted model is automatically logged
-with mlflow.start_run() as run1:
+with mlflow.start_run(run_name='run1') as run1:
 
     # hyper parameters
     n_estimators = 100
@@ -92,7 +86,7 @@ with mlflow.start_run() as run1:
     #use the model to try and make predictions
     y_pred = rf.predict(X_test)
 
-with mlflow.start_run() as run2:
+with mlflow.start_run(run_name='run2') as run2:
     # hyper parameters
     n_estimators = 100
     max_depth = 6
@@ -105,7 +99,7 @@ with mlflow.start_run() as run2:
     #use the model to try and make predictions
     y_pred = rf.predict(X_test)
 
-with mlflow.start_run() as run3:
+with mlflow.start_run(run_name='run3') as run4:
     # hyper parameters
     n_estimators = 150
     max_depth = 6
@@ -117,6 +111,21 @@ with mlflow.start_run() as run3:
 
     #use the model to try and make predictions
     y_pred = rf.predict(X_test)
+
+with mlflow.start_run(run_name='run4') as run4:
+    # hyper parameters
+    n_estimators = 200
+    max_depth = 12
+    max_features = 10
+
+    # create and train model
+    rf = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, max_features=max_features)
+    rf.fit(X_train, y_train)
+
+    #use the model to try and make predictions
+    y_pred = rf.predict(X_test)
+
+mlflow.end_run()
 
 # COMMAND ----------
 
