@@ -60,6 +60,20 @@ print(mlflow.version.VERSION)
 
 # COMMAND ----------
 
+# # Corrected code with an absolute path
+# fs = dbutils.fs.ls('/dbfs/databricks/mlflow/experiments/')
+# display(fs)
+
+# COMMAND ----------
+
+# Projects/databricks-machine_learning/2-ML Flow/wine-analysis/2-with-MLFlow
+
+experiment_name = '/Users/databricksadmin@eruzasubscriptionhotmail.onmicrosoft.com/wine-analysis-experiments-batch1'
+mlflow.set_experiment(experiment_name)
+
+# COMMAND ----------
+
+
 # Enable autolog  
 mlflow.sklearn.autolog()
 
@@ -68,7 +82,7 @@ with mlflow.start_run() as run1:
 
     # hyper parameters
     n_estimators = 100
-    max_depth = 6
+    max_depth = 3
     max_features = 3
 
     # create and train model
@@ -91,6 +105,18 @@ with mlflow.start_run() as run2:
     #use the model to try and make predictions
     y_pred = rf.predict(X_test)
 
+with mlflow.start_run() as run3:
+    # hyper parameters
+    n_estimators = 150
+    max_depth = 6
+    max_features = 5
+
+    # create and train model
+    rf = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, max_features=max_features)
+    rf.fit(X_train, y_train)
+
+    #use the model to try and make predictions
+    y_pred = rf.predict(X_test)
 
 # COMMAND ----------
 
